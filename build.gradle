@@ -1,0 +1,55 @@
+plugins{
+    id 'antlr'
+    id 'java'
+    id 'application'
+}
+
+version = '0.1.0'
+def grammarOutput = "${projectDir}/src/main/antlr/gen/"
+def paquete = "org.lenguajegoto"
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    antlr 'org.antlr:antlr4:4.7.2'
+
+    implementation 'org.antlr:antlr4-runtime:4.7.2'
+}
+
+application {
+    mainClass = 'org.lenguajegoto.Lanzador'
+}
+
+// Antlr
+generateGrammarSource {
+    group = 'antlr'
+    description = 'Generates the source files for all production ANTLR grammars.'
+    maxHeapSize = "64m"
+    arguments += [ "-visitor",
+                   "-long-messages",
+                   "-package", paquete
+    ]
+    outputDirectory = file(grammarOutput+paquete)
+}
+
+
+tasks.register("deleteGenDirs") {
+    group = "antlr"
+    doLast {
+        def gen = file("${projectDir}/src/main/antlr/gen")
+        delete gen
+        def generated = file(grammarOutput)
+        delete generated
+    }
+}
+clean.dependsOn("deleteGenDirs")
+
+
+sourceSets {
+    main {
+        java.srcDirs += grammarOutput
+    }
+}
