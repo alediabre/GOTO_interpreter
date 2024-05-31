@@ -1,7 +1,5 @@
 package org.lenguajegoto;
 
-import org.antlr.v4.runtime.tree.ParseTree;
-
 import java.util.*;
 
 public class Visitor extends AnasintBaseVisitor<Object>{
@@ -23,23 +21,21 @@ public class Visitor extends AnasintBaseVisitor<Object>{
             }
             instrucciones.put(i, hijo);
         }
-        initializeVars();
         max_instr = ctx.getChildCount();
         controller();
         System.out.println("Resultado: Y = "+ variables.get("Y"));
         return null;
     }
 
+    public void setVariable(String varName, int value){
+        this.variables.put(varName,value);
+    }
 
     public void controller(){
         while (instr < max_instr) {
             System.out.println(variables + " | instr:"+instr+ " ("+instrucciones.get(instr).getText()+")");
             visitInstruccion(instrucciones.get(instr));
         }
-    }
-    public void initializeVars(){
-        variables.put("Y", 0);
-        variables.put("X1", 4);
     }
 
     public Object visitEtiqueta(Anasint.EtiquetaContext ctx) {

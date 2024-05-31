@@ -1,0 +1,29 @@
+{
+  "name": "goto-language",
+  "displayName": "GOTO Language",
+  "description": "Extension for GOTO development",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.89.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "goto",
+      "aliases": ["GOTO", "goto"],
+      "extensions": [".goto"],
+      "configuration": "./language-configuration.json",
+      "icon": {
+        "light": "./icons/file-goto.png",
+        "dark": "./icons/file-goto.png"
+      }
+    }],
+    "grammars": [{
+      "language": "goto",
+      "scopeName": "source.goto",
+      "path": "./syntaxes/goto.tmLanguage.json"
+    }]
+  }
+}

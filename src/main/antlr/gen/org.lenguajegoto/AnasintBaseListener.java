@@ -1,4 +1,4 @@
-// Generated from Anasint.g4 by ANTLR 4.7.2
+// Generated from Anasint.g4 by ANTLR 4.13.1
 package org.lenguajegoto;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -10,6 +10,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
  * which can be extended to create a listener which only needs to handle a subset
  * of the available methods.
  */
+@SuppressWarnings("CheckReturnValue")
 public class AnasintBaseListener implements AnasintListener {
 	/**
 	 * {@inheritDoc}

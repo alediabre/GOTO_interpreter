@@ -1,4 +1,4 @@
-// Generated from Anasint.g4 by ANTLR 4.7.2
+// Generated from Anasint.g4 by ANTLR 4.13.1
 package org.lenguajegoto;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -9,17 +9,18 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
 
-@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
+@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue"})
 public class Anasint extends Parser {
-	static { RuntimeMetaData.checkVersion("4.7.2", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.13.1", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		BLANCO=1, TABULADOR=2, FIN_LINEA=3, LETRA=4, IF=5, GOTO=6, PA=7, PC=8, 
-		CA=9, CC=10, ASIGNA=11, DISTINTO=12, MAS=13, MENOS=14, UNO=15, CERO=16, 
-		X=17, Y=18, Z=19, NUMERO=20, VAR_ENTRADA=21, VAR_TRABAJO=22, ETIQUETA=23;
+		BLANCO=1, TABULADOR=2, FIN_LINEA=3, COMMENT=4, LINE_COMMENT=5, LETRA=6, 
+		IF=7, GOTO=8, PA=9, PC=10, CA=11, CC=12, ASIGNA=13, DISTINTO=14, MAS=15, 
+		MENOS=16, UNO=17, CERO=18, X=19, Y=20, Z=21, NUMERO=22, VAR_ENTRADA=23, 
+		VAR_TRABAJO=24, ETIQUETA=25;
 	public static final int
 		RULE_programa = 0, RULE_instruccion = 1, RULE_instruccion_basica = 2, 
 		RULE_incremento = 3, RULE_decremento = 4, RULE_condicional = 5, RULE_skip = 6, 
@@ -36,16 +37,18 @@ public class Anasint extends Parser {
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, "' '", "'\t'", null, null, "'IF'", "'GOTO'", "'('", "')'", "'['", 
-			"']'", "'<-'", "'!='", "'+'", "'-'", "'1'", "'0'", "'X'", "'Y'", "'Z'"
+			null, "' '", "'\\t'", null, null, null, null, "'IF'", "'GOTO'", "'('", 
+			"')'", "'['", "']'", "'<-'", "'!='", "'+'", "'-'", "'1'", "'0'", "'X'", 
+			"'Y'", "'Z'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, "BLANCO", "TABULADOR", "FIN_LINEA", "LETRA", "IF", "GOTO", "PA", 
-			"PC", "CA", "CC", "ASIGNA", "DISTINTO", "MAS", "MENOS", "UNO", "CERO", 
-			"X", "Y", "Z", "NUMERO", "VAR_ENTRADA", "VAR_TRABAJO", "ETIQUETA"
+			null, "BLANCO", "TABULADOR", "FIN_LINEA", "COMMENT", "LINE_COMMENT", 
+			"LETRA", "IF", "GOTO", "PA", "PC", "CA", "CC", "ASIGNA", "DISTINTO", 
+			"MAS", "MENOS", "UNO", "CERO", "X", "Y", "Z", "NUMERO", "VAR_ENTRADA", 
+			"VAR_TRABAJO", "ETIQUETA"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -99,6 +102,7 @@ public class Anasint extends Parser {
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class ProgramaContext extends ParserRuleContext {
 		public List<InstruccionContext> instruccion() {
 			return getRuleContexts(InstruccionContext.class);
@@ -145,7 +149,7 @@ public class Anasint extends Parser {
 				setState(27); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << IF) | (1L << CA) | (1L << X) | (1L << Y) | (1L << Z) | (1L << VAR_ENTRADA) | (1L << VAR_TRABAJO))) != 0) );
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & 28838016L) != 0) );
 			}
 		}
 		catch (RecognitionException re) {
@@ -159,6 +163,7 @@ public class Anasint extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class InstruccionContext extends ParserRuleContext {
 		public Instruccion_basicaContext instruccion_basica() {
 			return getRuleContext(Instruccion_basicaContext.class,0);
@@ -223,6 +228,7 @@ public class Anasint extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class Instruccion_basicaContext extends ParserRuleContext {
 		public IncrementoContext incremento() {
 			return getRuleContext(IncrementoContext.class,0);
@@ -303,6 +309,7 @@ public class Anasint extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class IncrementoContext extends ParserRuleContext {
 		public List<VariableContext> variable() {
 			return getRuleContexts(VariableContext.class);
@@ -361,6 +368,7 @@ public class Anasint extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class DecrementoContext extends ParserRuleContext {
 		public List<VariableContext> variable() {
 			return getRuleContexts(VariableContext.class);
@@ -419,6 +427,7 @@ public class Anasint extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class CondicionalContext extends ParserRuleContext {
 		public TerminalNode IF() { return getToken(Anasint.IF, 0); }
 		public VariableContext variable() {
@@ -480,6 +489,7 @@ public class Anasint extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class SkipContext extends ParserRuleContext {
 		public List<VariableContext> variable() {
 			return getRuleContexts(VariableContext.class);
@@ -532,6 +542,7 @@ public class Anasint extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class VariableContext extends ParserRuleContext {
 		public Var_entradaContext var_entrada() {
 			return getRuleContext(Var_entradaContext.class,0);
@@ -606,6 +617,7 @@ public class Anasint extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class Var_entradaContext extends ParserRuleContext {
 		public TerminalNode X() { return getToken(Anasint.X, 0); }
 		public TerminalNode VAR_ENTRADA() { return getToken(Anasint.VAR_ENTRADA, 0); }
@@ -658,6 +670,7 @@ public class Anasint extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class Var_salidaContext extends ParserRuleContext {
 		public TerminalNode Y() { return getToken(Anasint.Y, 0); }
 		public Var_salidaContext(ParserRuleContext parent, int invokingState) {
@@ -700,6 +713,7 @@ public class Anasint extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class Var_trabajoContext extends ParserRuleContext {
 		public TerminalNode Z() { return getToken(Anasint.Z, 0); }
 		public TerminalNode VAR_TRABAJO() { return getToken(Anasint.VAR_TRABAJO, 0); }
@@ -752,6 +766,7 @@ public class Anasint extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class EtiquetaContext extends ParserRuleContext {
 		public TerminalNode LETRA() { return getToken(Anasint.LETRA, 0); }
 		public TerminalNode ETIQUETA() { return getToken(Anasint.ETIQUETA, 0); }
@@ -805,26 +820,51 @@ public class Anasint extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\31R\4\2\t\2\4\3\t"+
-		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4"+
-		"\f\t\f\4\r\t\r\3\2\6\2\34\n\2\r\2\16\2\35\3\3\3\3\3\3\3\3\5\3$\n\3\3\3"+
-		"\3\3\3\4\3\4\3\4\3\4\5\4,\n\4\3\5\3\5\3\5\3\5\3\5\3\5\3\6\3\6\3\6\3\6"+
-		"\3\6\3\6\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\b\3\b\3\b\3\b\3\t\3\t\3\t\5\tH"+
-		"\n\t\3\n\3\n\3\13\3\13\3\f\3\f\3\r\3\r\3\r\2\2\16\2\4\6\b\n\f\16\20\22"+
-		"\24\26\30\2\5\4\2\23\23\27\27\4\2\25\25\30\30\4\2\6\6\31\31\2L\2\33\3"+
-		"\2\2\2\4#\3\2\2\2\6+\3\2\2\2\b-\3\2\2\2\n\63\3\2\2\2\f9\3\2\2\2\16@\3"+
-		"\2\2\2\20G\3\2\2\2\22I\3\2\2\2\24K\3\2\2\2\26M\3\2\2\2\30O\3\2\2\2\32"+
-		"\34\5\4\3\2\33\32\3\2\2\2\34\35\3\2\2\2\35\33\3\2\2\2\35\36\3\2\2\2\36"+
-		"\3\3\2\2\2\37 \7\13\2\2 !\5\30\r\2!\"\7\f\2\2\"$\3\2\2\2#\37\3\2\2\2#"+
-		"$\3\2\2\2$%\3\2\2\2%&\5\6\4\2&\5\3\2\2\2\',\5\b\5\2(,\5\n\6\2),\5\f\7"+
-		"\2*,\5\16\b\2+\'\3\2\2\2+(\3\2\2\2+)\3\2\2\2+*\3\2\2\2,\7\3\2\2\2-.\5"+
-		"\20\t\2./\7\r\2\2/\60\5\20\t\2\60\61\7\17\2\2\61\62\7\21\2\2\62\t\3\2"+
-		"\2\2\63\64\5\20\t\2\64\65\7\r\2\2\65\66\5\20\t\2\66\67\7\20\2\2\678\7"+
-		"\21\2\28\13\3\2\2\29:\7\7\2\2:;\5\20\t\2;<\7\16\2\2<=\7\22\2\2=>\7\b\2"+
-		"\2>?\5\30\r\2?\r\3\2\2\2@A\5\20\t\2AB\7\r\2\2BC\5\20\t\2C\17\3\2\2\2D"+
-		"H\5\22\n\2EH\5\24\13\2FH\5\26\f\2GD\3\2\2\2GE\3\2\2\2GF\3\2\2\2H\21\3"+
-		"\2\2\2IJ\t\2\2\2J\23\3\2\2\2KL\7\24\2\2L\25\3\2\2\2MN\t\3\2\2N\27\3\2"+
-		"\2\2OP\t\4\2\2P\31\3\2\2\2\6\35#+G";
+		"\u0004\u0001\u0019P\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
+		"\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004\u0002"+
+		"\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0002\u0007\u0007\u0007\u0002"+
+		"\b\u0007\b\u0002\t\u0007\t\u0002\n\u0007\n\u0002\u000b\u0007\u000b\u0001"+
+		"\u0000\u0004\u0000\u001a\b\u0000\u000b\u0000\f\u0000\u001b\u0001\u0001"+
+		"\u0001\u0001\u0001\u0001\u0001\u0001\u0003\u0001\"\b\u0001\u0001\u0001"+
+		"\u0001\u0001\u0001\u0002\u0001\u0002\u0001\u0002\u0001\u0002\u0003\u0002"+
+		"*\b\u0002\u0001\u0003\u0001\u0003\u0001\u0003\u0001\u0003\u0001\u0003"+
+		"\u0001\u0003\u0001\u0004\u0001\u0004\u0001\u0004\u0001\u0004\u0001\u0004"+
+		"\u0001\u0004\u0001\u0005\u0001\u0005\u0001\u0005\u0001\u0005\u0001\u0005"+
+		"\u0001\u0005\u0001\u0005\u0001\u0006\u0001\u0006\u0001\u0006\u0001\u0006"+
+		"\u0001\u0007\u0001\u0007\u0001\u0007\u0003\u0007F\b\u0007\u0001\b\u0001"+
+		"\b\u0001\t\u0001\t\u0001\n\u0001\n\u0001\u000b\u0001\u000b\u0001\u000b"+
+		"\u0000\u0000\f\u0000\u0002\u0004\u0006\b\n\f\u000e\u0010\u0012\u0014\u0016"+
+		"\u0000\u0003\u0002\u0000\u0013\u0013\u0017\u0017\u0002\u0000\u0015\u0015"+
+		"\u0018\u0018\u0002\u0000\u0006\u0006\u0019\u0019J\u0000\u0019\u0001\u0000"+
+		"\u0000\u0000\u0002!\u0001\u0000\u0000\u0000\u0004)\u0001\u0000\u0000\u0000"+
+		"\u0006+\u0001\u0000\u0000\u0000\b1\u0001\u0000\u0000\u0000\n7\u0001\u0000"+
+		"\u0000\u0000\f>\u0001\u0000\u0000\u0000\u000eE\u0001\u0000\u0000\u0000"+
+		"\u0010G\u0001\u0000\u0000\u0000\u0012I\u0001\u0000\u0000\u0000\u0014K"+
+		"\u0001\u0000\u0000\u0000\u0016M\u0001\u0000\u0000\u0000\u0018\u001a\u0003"+
+		"\u0002\u0001\u0000\u0019\u0018\u0001\u0000\u0000\u0000\u001a\u001b\u0001"+
+		"\u0000\u0000\u0000\u001b\u0019\u0001\u0000\u0000\u0000\u001b\u001c\u0001"+
+		"\u0000\u0000\u0000\u001c\u0001\u0001\u0000\u0000\u0000\u001d\u001e\u0005"+
+		"\u000b\u0000\u0000\u001e\u001f\u0003\u0016\u000b\u0000\u001f \u0005\f"+
+		"\u0000\u0000 \"\u0001\u0000\u0000\u0000!\u001d\u0001\u0000\u0000\u0000"+
+		"!\"\u0001\u0000\u0000\u0000\"#\u0001\u0000\u0000\u0000#$\u0003\u0004\u0002"+
+		"\u0000$\u0003\u0001\u0000\u0000\u0000%*\u0003\u0006\u0003\u0000&*\u0003"+
+		"\b\u0004\u0000\'*\u0003\n\u0005\u0000(*\u0003\f\u0006\u0000)%\u0001\u0000"+
+		"\u0000\u0000)&\u0001\u0000\u0000\u0000)\'\u0001\u0000\u0000\u0000)(\u0001"+
+		"\u0000\u0000\u0000*\u0005\u0001\u0000\u0000\u0000+,\u0003\u000e\u0007"+
+		"\u0000,-\u0005\r\u0000\u0000-.\u0003\u000e\u0007\u0000./\u0005\u000f\u0000"+
+		"\u0000/0\u0005\u0011\u0000\u00000\u0007\u0001\u0000\u0000\u000012\u0003"+
+		"\u000e\u0007\u000023\u0005\r\u0000\u000034\u0003\u000e\u0007\u000045\u0005"+
+		"\u0010\u0000\u000056\u0005\u0011\u0000\u00006\t\u0001\u0000\u0000\u0000"+
+		"78\u0005\u0007\u0000\u000089\u0003\u000e\u0007\u00009:\u0005\u000e\u0000"+
+		"\u0000:;\u0005\u0012\u0000\u0000;<\u0005\b\u0000\u0000<=\u0003\u0016\u000b"+
+		"\u0000=\u000b\u0001\u0000\u0000\u0000>?\u0003\u000e\u0007\u0000?@\u0005"+
+		"\r\u0000\u0000@A\u0003\u000e\u0007\u0000A\r\u0001\u0000\u0000\u0000BF"+
+		"\u0003\u0010\b\u0000CF\u0003\u0012\t\u0000DF\u0003\u0014\n\u0000EB\u0001"+
+		"\u0000\u0000\u0000EC\u0001\u0000\u0000\u0000ED\u0001\u0000\u0000\u0000"+
+		"F\u000f\u0001\u0000\u0000\u0000GH\u0007\u0000\u0000\u0000H\u0011\u0001"+
+		"\u0000\u0000\u0000IJ\u0005\u0014\u0000\u0000J\u0013\u0001\u0000\u0000"+
+		"\u0000KL\u0007\u0001\u0000\u0000L\u0015\u0001\u0000\u0000\u0000MN\u0007"+
+		"\u0002\u0000\u0000N\u0017\u0001\u0000\u0000\u0000\u0004\u001b!)E";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

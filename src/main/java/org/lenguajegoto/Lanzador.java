@@ -1,34 +1,52 @@
 package org.lenguajegoto;
 
-import org.antlr.v4.gui.TreeViewer;
+//import org.antlr.v4.gui.TreeViewer;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.*;
-import javax.swing.*;
-import java.util.Arrays;
-
+//import javax.swing.*;
+//import java.util.Arrays;
+//import java.nio.file.Paths;
 
 public class Lanzador {
     public static void main(String[] args) throws Exception{
-        CharStream input = CharStreams.fromFileName("src/main/resources/programa.txt");
-        Analex analex = new Analex(input);
-        CommonTokenStream tokens = new CommonTokenStream(analex);
+        if (args.length < 1) {
+            System.err.println("No se ha proporcionado un fichero de entrada");
+            System.exit(1);
+        }
+        try{
+            CharStream input = CharStreams.fromFileName(args[0]);
+            Analex analex = new Analex(input);
+            CommonTokenStream tokens = new CommonTokenStream(analex);
 
-        Anasint anasint = new Anasint(tokens);
-        ParseTree tree = anasint.programa();
+            Anasint anasint = new Anasint(tokens);
+            ParseTree tree = anasint.programa();
 
-        JFrame frame = new JFrame("Árbol de Análisis");
-        JPanel panel = new JPanel();
-        TreeViewer viewer = new TreeViewer(Arrays.asList(anasint.getRuleNames()),tree);
-        viewer.setScale(1);
-        panel.add(viewer);
-        frame.add(panel);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500,400);
-        frame.setVisible(true);
+            /*
+            JFrame frame = new JFrame("Árbol de Análisis");
+            JPanel panel = new JPanel();
+            TreeViewer viewer = new TreeViewer(Arrays.asList(anasint.getRuleNames()),tree);
+            viewer.setScale(1);
+            panel.add(viewer);
+            frame.add(panel);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setSize(500,400);
+            frame.setVisible(true);
+            */
 
-        //RECORRIDO CON VISITOR
+            //RECORRIDO CON VISITOR
+            Visitor visitor= new Visitor();
 
-        Visitor visitor= new Visitor();
-        visitor.visit(tree);
+            visitor.setVariable("Y", 0);
+            for (int i=1; i<args.length; i++){
+                visitor.setVariable("X"+i, Integer.parseInt(args[i]));
+            }
+            visitor.visit(tree);
+
+        } catch (Exception e) {
+            e.getMessage();
+        }
     }
 }

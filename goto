@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ "$#" -lt 2 ]; then
+    echo "Incorrect number of arguments. Try: <GOTO file path> <X1>..."
+    exit 1
+fi
+
+java -jar /usr/local/lib/lenguajeGOTO-0.1.0-all.jar "$@"

@@ -1,0 +1,91 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "GOTO",
+	"fileTypes": [
+		"goto"
+	],
+	"patterns": [
+		{"include": "#keywords"},
+		{"include": "#integers"},
+		{"include": "#assign"},
+		{"include": "#operators"},
+		{"include": "#labels"},
+		{"include": "#variables"}
+	],
+	"repository": {
+		"keywords": {
+			"patterns": [{
+				"name": "keyword.control",
+				"match": "\\b(IF|GOTO)\\b"
+			}]
+		},
+		"integers": {
+			"patterns": [{
+				"name": "constant.numeric",
+				"match": "\\b[0-9]+\\b"
+			}]
+		},
+		"assign": {
+			"patterns": [{
+				"name": "keyword.operator",
+				"match": "<-"
+			}]
+		},
+		"mathematical_operators": {
+			"patterns": [{
+				"name": "keyword.operator",
+				"match": "(\\+|-)"
+			}]
+		},
+		"logical_operators": {
+			"patterns": [{
+				"name": "keyword.control",
+				"match": "!="
+			}]
+		},
+		"operators": {
+			"patterns": [
+				{"include": "#mathematical_operators"},
+				{"include": "#logical_operators"}
+			]
+		},
+		"labels": {
+			"patterns": [
+				{
+					"name": "support.type",
+					"match": "\\b[A-E]{1}[0-9]*\\b"
+				},
+				{
+					"name": "support.type",
+					"match": "^\\[[A-E]{1}[0-9]*\\]"
+				}
+			]
+		},
+		"working_variable": {
+			"patterns": [{
+				"name": "variable.parameter",
+				"match": "\\bZ{1}[0-9]*\\b"
+			}]
+		},
+		"input_variable": {
+			"patterns": [{
+				"name": "variable.parameter",
+				"match": "\\bX{1}[0-9]*\\b"
+			}]
+		},
+		"output_variable": {
+			"patterns": [{
+				"name": "constant.character",
+				"match": "\\bY\\b"
+			}]
+		},
+		"variables": {
+			"patterns": [
+				{"include": "#working_variable"},
+				{"include": "#input_variable"},
+				{"include": "#output_variable"}
+			]
+		}
+	},
+	"scopeName": "source.goto"
+}

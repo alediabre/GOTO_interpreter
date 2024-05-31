@@ -5,6 +5,9 @@ BLANCO: ' ' -> skip;
 TABULADOR: '\t' -> skip;
 FIN_LINEA: '\r'?'\n' -> skip;
 
+COMMENT: '/*' .*? '*/' -> skip;
+LINE_COMMENT: '//' ~[\r\n]* -> skip;
+
 fragment DIGITO: [0-9];
 LETRA: [A-E];
 
