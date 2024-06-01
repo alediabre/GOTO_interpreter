@@ -5,7 +5,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.*;
 //import javax.swing.*;
 //import java.util.Arrays;
 //import java.nio.file.Paths;
@@ -39,14 +38,25 @@ public class Lanzador {
             //RECORRIDO CON VISITOR
             Visitor visitor= new Visitor();
 
+            //Set new output file and clear old one if it is the same
+            String outputName = "output.txt";
+            OutPrinter.clear(outputName);
+            visitor.setOutputFile(outputName);
+
+            //Set program name
+            String[] programRoute = args[0].split("/");
+            visitor.setProgramName(programRoute[programRoute.length-1]+" (MAIN)");
+
+            //Set variables
             visitor.setVariable("Y", 0);
             for (int i=1; i<args.length; i++){
                 visitor.setVariable("X"+i, Integer.parseInt(args[i]));
             }
-            visitor.visit(tree);
+
+            Integer result = (Integer) visitor.visit(tree);
 
         } catch (Exception e) {
-            e.getMessage();
+            e.printStackTrace();
         }
     }
 }

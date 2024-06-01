@@ -7,16 +7,23 @@ tokenVocab=Analex;
 programa: instruccion+;
 instruccion: (CA etiqueta CC)? instruccion_basica;
 
-instruccion_basica: incremento | decremento | condicional | skip;
+instruccion_basica: incremento | decremento | condicional | asignacion | salto_incondicional;
 
 incremento: variable ASIGNA variable MAS UNO;
 decremento: variable ASIGNA variable MENOS UNO;
-condicional: IF variable DISTINTO CERO GOTO etiqueta;
-skip: variable ASIGNA variable;
+condicional: IF condicion GOTO etiqueta;
+asignacion: variable ASIGNA (variable|macro);
+salto_incondicional: GOTO etiqueta;
+
 
 variable: var_entrada | var_salida | var_trabajo;
 var_entrada: X | VAR_ENTRADA;
 var_salida: Y;
 var_trabajo: Z | VAR_TRABAJO;
+variables: variable (COMA variables)?;
 
 etiqueta: LETRA | ETIQUETA;
+
+condicion: (variable DISTINTO CERO) | macro;
+
+macro: ID_FUNCION PA variables PC;

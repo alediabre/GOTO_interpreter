@@ -1,0 +1,9 @@
+[B] IF X1 != 0 GOTO A
+IF X2 != 0 GOTO E
+Y <- Y + 1
+GOTO E
+[A] IF X2 != 0 GOTO C
+GOTO E
+[C] X1 <- X1 - 1
+X2 <- X2 - 1
+GOTO B

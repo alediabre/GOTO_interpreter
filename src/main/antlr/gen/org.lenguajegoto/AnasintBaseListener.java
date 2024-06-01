@@ -89,13 +89,25 @@ public class AnasintBaseListener implements AnasintListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterSkip(Anasint.SkipContext ctx) { }
+	@Override public void enterAsignacion(Anasint.AsignacionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitSkip(Anasint.SkipContext ctx) { }
+	@Override public void exitAsignacion(Anasint.AsignacionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterSalto_incondicional(Anasint.Salto_incondicionalContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSalto_incondicional(Anasint.Salto_incondicionalContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -149,6 +161,18 @@ public class AnasintBaseListener implements AnasintListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterVariables(Anasint.VariablesContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitVariables(Anasint.VariablesContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterEtiqueta(Anasint.EtiquetaContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -156,6 +180,30 @@ public class AnasintBaseListener implements AnasintListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitEtiqueta(Anasint.EtiquetaContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterCondicion(Anasint.CondicionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCondicion(Anasint.CondicionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterMacro(Anasint.MacroContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMacro(Anasint.MacroContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

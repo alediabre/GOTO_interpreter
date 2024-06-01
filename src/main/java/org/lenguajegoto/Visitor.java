@@ -1,134 +1,105 @@
 package org.lenguajegoto;
 
-import java.util.*;
 
-public class Visitor extends AnasintBaseVisitor<Object>{
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
 
-    public Map<String, Integer> variables = new HashMap<>();
-    public Map<Integer, Anasint.InstruccionContext> instrucciones = new HashMap<>(); //Correspondencia num. instruccion con el contexto de la instruccion
-    public Map<String, Integer> etiquetas = new HashMap<>(); //Correspondencia etiqueta con el num. instrucción
-    public Integer instr = 0; //Numero de instruccion actual
-    public Integer max_instr; //Numero total de instrucciones (longitud del programa)
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
+public class Visitor extends BaseVisitor {
+    List<String> macroVars; //Input variables for the macro function are held temporally in this list for their assignment
 
-    public Object visitPrograma(Anasint.ProgramaContext ctx) {
-        //Recorre todas las instrucciones para indexarlas en "instrucciones" y guardar los índices de las etiquetas en "etiquetas"
-        for (int i=0; i<ctx.getChildCount(); i++){
-            Anasint.InstruccionContext hijo = (Anasint.InstruccionContext) ctx.getChild(i);
-            if (hijo.etiqueta() != null){
-                String etiq = (String) visitEtiqueta(hijo.etiqueta());
-                etiquetas.put(etiq, i);
+    public void setMacro(Boolean v){
+        this.isMacro = v;
+    }
+
+    public Object visitMacro(Anasint.MacroContext ctx) {
+        //Get macro file for the function found by the parser
+        Integer result = null;
+        String function_name = ctx.ID_FUNCION().getText().toLowerCase();
+        String directory_name = propertyLoader.getProperty("app.function.directory");
+        String functionFile = propertyLoader.getProperty("app.function."+function_name);
+
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(directory_name+functionFile)){
+            if (inputStream != null) {
+                //Create a new tree for the program defined for the macro
+                CharStream input = CharStreams.fromStream(inputStream);
+                Analex analex = new Analex(input);
+                CommonTokenStream tokens = new CommonTokenStream(analex);
+                Anasint anasint = new Anasint(tokens);
+                ParseTree tree = anasint.programa();
+
+                //Create macro Visitor and set basic properties
+                Visitor visitor_macro= new Visitor();
+                visitor_macro.setProgramName(function_name);
+                visitor_macro.setMacro(true);
+
+                //Create new variable space (macroVars) and set to Visitor
+                macroVars = new ArrayList<>();
+                visitor_macro.setVariable("Y", 0);
+                visit(ctx.variables());
+                for (int i=1; i<=macroVars.size(); i++){
+                    visitor_macro.setVariable("X"+i, variables.get(macroVars.get(i-1)));
+                }
+
+                //Visit tree and save the result (Y value)
+                result = (Integer) visitor_macro.visit(tree);
+            }else{
+                //If macro is not defined or misspelled, notify user and go to program end
+                OutPrinter.print(outputFile, "ERROR[Instr: "+instr+"]: Function "+function_name+" not found in macros");
+                instr = max_instr;
             }
-            instrucciones.put(i, hijo);
+        }catch (IOException ex){
+            ex.printStackTrace();
         }
-        max_instr = ctx.getChildCount();
-        controller();
-        System.out.println("Resultado: Y = "+ variables.get("Y"));
-        return null;
+        //Returns macro result to be used
+        return result;
     }
 
-    public void setVariable(String varName, int value){
-        this.variables.put(varName,value);
-    }
-
-    public void controller(){
-        while (instr < max_instr) {
-            System.out.println(variables + " | instr:"+instr+ " ("+instrucciones.get(instr).getText()+")");
-            visitInstruccion(instrucciones.get(instr));
-        }
-    }
-
-    public Object visitEtiqueta(Anasint.EtiquetaContext ctx) {
-        //Si la etiqueta es solo una letra L, le añade el subíndice 1 (L1)
-        String etiq = ctx.getText();
-        if (etiq.length() == 1){
-            etiq += '1';
-        }
-        return etiq;
-    }
-
-    public Object visitInstruccion(Anasint.InstruccionContext ctx) {
-        if (ctx != null){
-            visit(ctx.instruccion_basica());
-        }
-        return null;
-    }
-
-    public Object visitCondicional(Anasint.CondicionalContext ctx) {
-        String etiq = (String) visitEtiqueta(ctx.etiqueta());
+    public Object visitVariables(Anasint.VariablesContext ctx){
+        //Add recursively the input variables of the macro function to macroVars
         String var = (String) visit(ctx.variable());
-        if (!variables.containsKey(var)){ //Se añade la variable a "variables" si no existía
-            variables.put(var,0);
+        macroVars.add(var);
+        if (ctx.variables() != null){
+            visit(ctx.variables());
         }
-        if (etiq.equals("E1")){ //La etiqueta E lleva a la terminación del programa
+        return null;
+    }
+
+    public Object visitAsignacion(Anasint.AsignacionContext ctx){
+        String var0 = (String) visit(ctx.variable(0));
+        Integer nuevoValor;
+        if (ctx.macro() != null){
+            //If it is a macro, first the value returned by the macro must be evaluated
+            nuevoValor = (Integer) visit(ctx.macro());
+        }else{
+            //If it is a variable, the value of that variable is assigned to the first one
+            String var1 = (String) visit(ctx.variable(1));
+            nuevoValor = variables.get(var1);
+        }
+        variables.put(var0, nuevoValor);
+        instr +=1;
+        return null;
+    }
+
+    public Object visitSalto_incondicional(Anasint.Salto_incondicionalContext ctx){
+        String etiq = (String) visitEtiqueta(ctx.etiqueta());
+        if (etiq.equals("E1")){
+            //The E label ends the program
             instr = max_instr;
-
-        } else if (!etiquetas.containsKey(etiq)){ //Si no existe la etiqueta
-            System.out.println("La etiqueta "+etiq+" no existe en este programa");
-
-        }else if (variables.get(var) != 0){ //Si se cumple la condición
+        }else if (!etiquetas.containsKey(etiq)){
+            //If label does not exist, it ends the program and notify user
+            OutPrinter.print(outputFile,"WARNING[Instr: "+instr+"]: Label "+etiq+" does not exist in this program. Execution ends");
+            instr = max_instr;
+        }else{
+            //In other case, goes to the instruction the label points
             instr = etiquetas.get(etiq);
-
-        }else{ //Si no se cumple la condición
-            instr += 1;
         }
         return null;
     }
-
-    public Object visitIncremento(Anasint.IncrementoContext ctx) {
-        String var0 = (String) visit(ctx.variable(0));
-        String var1 = (String) visit(ctx.variable(1));
-        if (!var0.equals(var1)){
-            System.out.println("Las variables "+var0+" y "+var1+" no coinciden");
-        }else{
-            if (!variables.containsKey(var0)){
-                variables.put(var0,1);
-            }else {
-                Integer valor = variables.get(var0);
-                variables.put(var0, valor+1);
-            }
-        }
-        instr += 1;
-        return null;
-    }
-
-    public Object visitDecremento(Anasint.DecrementoContext ctx) {
-        String var0 = (String) visit(ctx.variable(0));
-        String var1 = (String) visit(ctx.variable(1));
-        if (!var0.equals(var1)){
-            System.out.println("Las variables "+var0+" y "+var1+" no coinciden");
-        }else{
-            if (!variables.containsKey(var0)){
-                variables.put(var0,0);
-            }else {
-                Integer valor = variables.get(var0);
-                variables.put(var0, Math.max(0,(valor-1)));
-            }
-        }
-        instr += 1;
-        return null;
-    }
-
-
-    public Object visitVar_entrada(Anasint.Var_entradaContext ctx) {
-        String var = ctx.getText();
-        if (var.length() == 1){
-            var += '1';
-        }
-        return var;
-    }
-
-    public Object visitVar_trabajo(Anasint.Var_trabajoContext ctx) {
-        String var = ctx.getText();
-        if (var.length() == 1){
-            var += '1';
-        }
-        return var;
-    }
-
-    public Object visitVar_salida(Anasint.Var_salidaContext ctx) {
-        return ctx.getText();
-    }
-
-
 }

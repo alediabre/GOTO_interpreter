@@ -47,11 +47,17 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitCondicional(Anasint.CondicionalContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Anasint#skip}.
+	 * Visit a parse tree produced by {@link Anasint#asignacion}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSkip(Anasint.SkipContext ctx);
+	T visitAsignacion(Anasint.AsignacionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Anasint#salto_incondicional}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSalto_incondicional(Anasint.Salto_incondicionalContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Anasint#variable}.
 	 * @param ctx the parse tree
@@ -77,9 +83,27 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVar_trabajo(Anasint.Var_trabajoContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Anasint#variables}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVariables(Anasint.VariablesContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Anasint#etiqueta}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitEtiqueta(Anasint.EtiquetaContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Anasint#condicion}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCondicion(Anasint.CondicionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Anasint#macro}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMacro(Anasint.MacroContext ctx);
 }

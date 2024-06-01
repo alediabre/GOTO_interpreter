@@ -23,7 +23,7 @@ application {
     mainClass = 'org.lenguajegoto.Lanzador'
 }
 run {
-    args = ["src/main/resources/identity_func.txt", "3"]
+    args = ["src/main/resources/prueba.goto", "3", "1"]
 }
 
 // Antlr

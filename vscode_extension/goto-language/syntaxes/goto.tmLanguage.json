@@ -10,9 +10,16 @@
 		{"include": "#assign"},
 		{"include": "#operators"},
 		{"include": "#labels"},
-		{"include": "#variables"}
+		{"include": "#variables"},
+		{"include": "#macros"}
 	],
 	"repository": {
+		"macros": {
+			"patterns": [{
+				"name": "support.function",
+				"match": "_[A-Z]{1}[A-Z0-9]*"
+			}]
+		},
 		"keywords": {
 			"patterns": [{
 				"name": "keyword.control",

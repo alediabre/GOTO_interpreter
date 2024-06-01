@@ -68,15 +68,25 @@ public interface AnasintListener extends ParseTreeListener {
 	 */
 	void exitCondicional(Anasint.CondicionalContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link Anasint#skip}.
+	 * Enter a parse tree produced by {@link Anasint#asignacion}.
 	 * @param ctx the parse tree
 	 */
-	void enterSkip(Anasint.SkipContext ctx);
+	void enterAsignacion(Anasint.AsignacionContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link Anasint#skip}.
+	 * Exit a parse tree produced by {@link Anasint#asignacion}.
 	 * @param ctx the parse tree
 	 */
-	void exitSkip(Anasint.SkipContext ctx);
+	void exitAsignacion(Anasint.AsignacionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Anasint#salto_incondicional}.
+	 * @param ctx the parse tree
+	 */
+	void enterSalto_incondicional(Anasint.Salto_incondicionalContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Anasint#salto_incondicional}.
+	 * @param ctx the parse tree
+	 */
+	void exitSalto_incondicional(Anasint.Salto_incondicionalContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Anasint#variable}.
 	 * @param ctx the parse tree
@@ -118,6 +128,16 @@ public interface AnasintListener extends ParseTreeListener {
 	 */
 	void exitVar_trabajo(Anasint.Var_trabajoContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link Anasint#variables}.
+	 * @param ctx the parse tree
+	 */
+	void enterVariables(Anasint.VariablesContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Anasint#variables}.
+	 * @param ctx the parse tree
+	 */
+	void exitVariables(Anasint.VariablesContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link Anasint#etiqueta}.
 	 * @param ctx the parse tree
 	 */
@@ -127,4 +147,24 @@ public interface AnasintListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitEtiqueta(Anasint.EtiquetaContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Anasint#condicion}.
+	 * @param ctx the parse tree
+	 */
+	void enterCondicion(Anasint.CondicionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Anasint#condicion}.
+	 * @param ctx the parse tree
+	 */
+	void exitCondicion(Anasint.CondicionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Anasint#macro}.
+	 * @param ctx the parse tree
+	 */
+	void enterMacro(Anasint.MacroContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Anasint#macro}.
+	 * @param ctx the parse tree
+	 */
+	void exitMacro(Anasint.MacroContext ctx);
 }
