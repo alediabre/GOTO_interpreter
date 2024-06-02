@@ -1,0 +1,36 @@
+---------------prueba.goto (MAIN)---------------
+{Y=0, X1=5, X2=6} | instr:0 (Y<-_POW(X1,X2))
+---------------_pow---------------
+{Y=0, X1=5, X2=6} | instr:0 (Z<-X1)
+{Z1=5, Y=0, X1=5, X2=6} | instr:1 (Y<-Y+1)
+{Z1=5, Y=1, X1=5, X2=6} | instr:2 ([B]IFX2!=0GOTOA)
+{Z1=5, Y=1, X1=5, X2=6} | instr:4 ([A]X2<-X2-1)
+{Z1=5, Y=1, X1=5, X2=5} | instr:5 (Y<-_PRODUCT(Y,Z))
+{Z1=5, Y=5, X1=5, X2=5} | instr:6 (GOTOB)
+{Z1=5, Y=5, X1=5, X2=5} | instr:2 ([B]IFX2!=0GOTOA)
+{Z1=5, Y=5, X1=5, X2=5} | instr:4 ([A]X2<-X2-1)
+{Z1=5, Y=5, X1=5, X2=4} | instr:5 (Y<-_PRODUCT(Y,Z))
+{Z1=5, Y=25, X1=5, X2=4} | instr:6 (GOTOB)
+{Z1=5, Y=25, X1=5, X2=4} | instr:2 ([B]IFX2!=0GOTOA)
+{Z1=5, Y=25, X1=5, X2=4} | instr:4 ([A]X2<-X2-1)
+{Z1=5, Y=25, X1=5, X2=3} | instr:5 (Y<-_PRODUCT(Y,Z))
+{Z1=5, Y=125, X1=5, X2=3} | instr:6 (GOTOB)
+{Z1=5, Y=125, X1=5, X2=3} | instr:2 ([B]IFX2!=0GOTOA)
+{Z1=5, Y=125, X1=5, X2=3} | instr:4 ([A]X2<-X2-1)
+{Z1=5, Y=125, X1=5, X2=2} | instr:5 (Y<-_PRODUCT(Y,Z))
+{Z1=5, Y=625, X1=5, X2=2} | instr:6 (GOTOB)
+{Z1=5, Y=625, X1=5, X2=2} | instr:2 ([B]IFX2!=0GOTOA)
+{Z1=5, Y=625, X1=5, X2=2} | instr:4 ([A]X2<-X2-1)
+{Z1=5, Y=625, X1=5, X2=1} | instr:5 (Y<-_PRODUCT(Y,Z))
+{Z1=5, Y=3125, X1=5, X2=1} | instr:6 (GOTOB)
+{Z1=5, Y=3125, X1=5, X2=1} | instr:2 ([B]IFX2!=0GOTOA)
+{Z1=5, Y=3125, X1=5, X2=1} | instr:4 ([A]X2<-X2-1)
+{Z1=5, Y=3125, X1=5, X2=0} | instr:5 (Y<-_PRODUCT(Y,Z))
+{Z1=5, Y=15625, X1=5, X2=0} | instr:6 (GOTOB)
+{Z1=5, Y=15625, X1=5, X2=0} | instr:2 ([B]IFX2!=0GOTOA)
+{Z1=5, Y=15625, X1=5, X2=0} | instr:3 (GOTOE)
+Resultado: Y = 15625
+---------------FIN _pow---------------
+{Y=15625, X1=5, X2=6} | instr:1 (Y<-Y+1)
+Resultado: Y = 15626
+---------------FIN prueba.goto (MAIN)---------------

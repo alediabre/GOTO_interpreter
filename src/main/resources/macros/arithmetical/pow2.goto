@@ -1,0 +1,2 @@
+Z <- X1
+Y <- _PRODUCT(X1,Z)

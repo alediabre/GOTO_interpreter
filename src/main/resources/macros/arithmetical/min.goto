@@ -1,0 +1,4 @@
+IF _LTE(X1,X2) GOTO A
+Y <- X2
+GOTO E
+[A] Y <- X1

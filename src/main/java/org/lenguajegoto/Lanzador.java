@@ -43,6 +43,11 @@ public class Lanzador {
             OutPrinter.clear(outputName);
             visitor.setOutputFile(outputName);
 
+            //Set verbose level: 0 = no output, 1 = only main program, 2 = program and first level macro, 3 = sencond level macros...
+            int verbose_level = 3;
+            visitor.setVerbose_level(verbose_level);
+            visitor.setExecution_level(1);
+
             //Set program name
             String[] programRoute = args[0].split("/");
             visitor.setProgramName(programRoute[programRoute.length-1]+" (MAIN)");

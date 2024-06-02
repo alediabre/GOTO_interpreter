@@ -14,18 +14,22 @@ import java.util.List;
 public class Visitor extends BaseVisitor {
     List<String> macroVars; //Input variables for the macro function are held temporally in this list for their assignment
 
-    public void setMacro(Boolean v){
-        this.isMacro = v;
-    }
 
     public Object visitMacro(Anasint.MacroContext ctx) {
         //Get macro file for the function found by the parser
         Integer result = null;
+        String directory_name = null;
+        String functionFile = null;
         String function_name = ctx.ID_FUNCION().getText().toLowerCase();
-        String directory_name = propertyLoader.getProperty("app.function.directory");
-        String functionFile = propertyLoader.getProperty("app.function."+function_name);
 
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(directory_name+functionFile)){
+        directory_name = propertyLoader.getProperty("app.function."+function_name+".type");
+        functionFile = propertyLoader.getProperty("app.function."+function_name);
+        if(directory_name==null || functionFile==null){
+            //If macro is not defined in config.properties, notify user and go to program end
+            print("ERROR[Instr: "+instr+"]: Function "+function_name+" not defined in macros");
+        }
+
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("macros/"+directory_name+"/"+functionFile)){
             if (inputStream != null) {
                 //Create a new tree for the program defined for the macro
                 CharStream input = CharStreams.fromStream(inputStream);
@@ -37,7 +41,9 @@ public class Visitor extends BaseVisitor {
                 //Create macro Visitor and set basic properties
                 Visitor visitor_macro= new Visitor();
                 visitor_macro.setProgramName(function_name);
-                visitor_macro.setMacro(true);
+                visitor_macro.setExecution_level(execution_level+1);
+                visitor_macro.setVerbose_level(verbose_level);
+                visitor_macro.setOutputFile(outputFile);
 
                 //Create new variable space (macroVars) and set to Visitor
                 macroVars = new ArrayList<>();
@@ -51,7 +57,7 @@ public class Visitor extends BaseVisitor {
                 result = (Integer) visitor_macro.visit(tree);
             }else{
                 //If macro is not defined or misspelled, notify user and go to program end
-                OutPrinter.print(outputFile, "ERROR[Instr: "+instr+"]: Function "+function_name+" not found in macros");
+                print("ERROR[Instr: "+instr+"]: Function "+function_name+" program not found in macros");
                 instr = max_instr;
             }
         }catch (IOException ex){
@@ -94,7 +100,7 @@ public class Visitor extends BaseVisitor {
             instr = max_instr;
         }else if (!etiquetas.containsKey(etiq)){
             //If label does not exist, it ends the program and notify user
-            OutPrinter.print(outputFile,"WARNING[Instr: "+instr+"]: Label "+etiq+" does not exist in this program. Execution ends");
+            print("WARNING[Instr: "+instr+"]: Label "+etiq+" does not exist in this program. Execution ends");
             instr = max_instr;
         }else{
             //In other case, goes to the instruction the label points

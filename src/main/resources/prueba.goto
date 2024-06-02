@@ -1,3 +1,3 @@
-IF _EQUALS(X1,X2) GOTO A
-GOTO E
-[A] Y <- Y +1
+Y <- _POW(X1,X2)
+Y <- Y + 1
+

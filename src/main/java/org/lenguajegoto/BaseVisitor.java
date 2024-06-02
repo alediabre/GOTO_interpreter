@@ -9,7 +9,8 @@ public class BaseVisitor extends AnasintBaseVisitor<Object> {
     PropertyLoader propertyLoader = new PropertyLoader("config.properties");
     String outputFile;
     String programName;
-    Boolean isMacro = false;
+    int execution_level;
+    int verbose_level;
     public Map<String, Integer> variables = new HashMap<>();
     public Map<Integer, Anasint.InstruccionContext> instrucciones = new HashMap<>(); //Correspondencia num. instruccion con el contexto de la instruccion
     public Map<String, Integer> etiquetas = new HashMap<>(); //Correspondencia etiqueta con el num. instrucción
@@ -21,8 +22,16 @@ public class BaseVisitor extends AnasintBaseVisitor<Object> {
         this.programName = name;
     }
     public void setOutputFile(String output){ this.outputFile = output; }
+    public void setVerbose_level(int value){ this.verbose_level = value; }
     public void setVariable(String varName, int value) {
         this.variables.put(varName, value);
+    }
+    public void setExecution_level(int value){ this.execution_level = value; }
+
+    public void print(String value){
+        if (verbose_level>=execution_level){
+            OutPrinter.print(outputFile, value);
+        }
     }
 
     public Object visitPrograma(Anasint.ProgramaContext ctx) {
@@ -41,13 +50,18 @@ public class BaseVisitor extends AnasintBaseVisitor<Object> {
     }
 
     public void controller() {
-        OutPrinter.print(outputFile,"---------------"+programName+"---------------");
+        print("---------------"+programName+"---------------");
         while (instr < max_instr) {
-            OutPrinter.print(outputFile, variables + " | instr:" + instr + " (" + instrucciones.get(instr).getText() + ")");
+            print(variables + " | instr:" + instr + " (" + instrucciones.get(instr).getText() + ")");
             visitInstruccion(instrucciones.get(instr));
         }
-        OutPrinter.print(outputFile,"Resultado: Y = "+ variables.get("Y"));
-        OutPrinter.print(outputFile,"---------------FIN "+programName+"---------------");
+        print("Resultado: Y = "+ variables.get("Y"));
+        print("---------------FIN "+programName+"---------------");
+    }
+
+    public Object visitInstruccion(Anasint.InstruccionContext ctx) {
+        visit(ctx.instruccion_basica());
+        return null;
     }
 
     public Object visitEtiqueta(Anasint.EtiquetaContext ctx) {
@@ -56,11 +70,6 @@ public class BaseVisitor extends AnasintBaseVisitor<Object> {
             etiq += '1';
         }
         return etiq;
-    }
-
-    public Object visitInstruccion(Anasint.InstruccionContext ctx) {
-        visit(ctx.instruccion_basica());
-        return null;
     }
 
     public Object visitVar_entrada(Anasint.Var_entradaContext ctx) {
@@ -87,8 +96,9 @@ public class BaseVisitor extends AnasintBaseVisitor<Object> {
         if (ctx.macro()!=null){
             //If there is a macro, evaluates macro. It must be a boolean macro
             String function_name = ctx.macro().ID_FUNCION().getText().toLowerCase();
-            boolean isBooleanMacro = propertyLoader.getProperty("app.function."+function_name+".bool").equals("true");
-            if (isBooleanMacro){
+            String isBooleanMacro = propertyLoader.getProperty("app.function."+function_name+".bool");
+
+            if (isBooleanMacro!=null && isBooleanMacro.equals("true")){
                 Integer c = (Integer) visit(ctx.macro());
                 if (c == 1){
                     return true;
@@ -97,7 +107,7 @@ public class BaseVisitor extends AnasintBaseVisitor<Object> {
                 }
             }else{
                 //A boolean macro is pretended to return Boolean value (0,1), a NOT boolean macro returns Integer value (0,1,2...)
-                OutPrinter.print(outputFile, "ERROR[Instr: "+instr+"]: Function "+function_name+" can not be used as a boolean condition");
+                print("ERROR[Instr: "+instr+"]: Function "+function_name+" can not be used as a boolean condition");
                 instr = max_instr;
                 return null;
             }
@@ -114,8 +124,9 @@ public class BaseVisitor extends AnasintBaseVisitor<Object> {
 
     public Object visitCondicional(Anasint.CondicionalContext ctx) {
         String etiq = (String) visitEtiqueta(ctx.etiqueta());
+        Object condicion = visit(ctx.condicion());
 
-        if ((Boolean)visit(ctx.condicion())){
+        if (condicion!=null && (Boolean)condicion){
             //Checks if condition is met
 
             if (etiq.equals("E1")){
@@ -123,7 +134,7 @@ public class BaseVisitor extends AnasintBaseVisitor<Object> {
                 instr = max_instr;
             }else if (!etiquetas.containsKey(etiq)){
                 //If label does not exist, it ends the program and notify user
-                OutPrinter.print(outputFile,"WARNING[Instr: "+instr+"]: Label "+etiq+" does not exist in this program. Execution ends");
+                print("WARNING[Instr: "+instr+"]: Label "+etiq+" does not exist in this program. Execution ends");
                 instr = max_instr;
             }else{
                 //In other case, goes to the instruction the label points
@@ -140,7 +151,8 @@ public class BaseVisitor extends AnasintBaseVisitor<Object> {
         String var0 = (String) visit(ctx.variable(0));
         String var1 = (String) visit(ctx.variable(1));
         if (!var0.equals(var1)){
-            OutPrinter.print(outputFile,"Las variables "+var0+" y "+var1+" no coinciden");
+            print("ERROR[Instr: "+instr+"]: Las variables "+var0+" y "+var1+" no coinciden");
+            instr = max_instr;
         }else{
             if (!variables.containsKey(var0)){
                 variables.put(var0,1);
@@ -157,7 +169,8 @@ public class BaseVisitor extends AnasintBaseVisitor<Object> {
         String var0 = (String) visit(ctx.variable(0));
         String var1 = (String) visit(ctx.variable(1));
         if (!var0.equals(var1)){
-            OutPrinter.print(outputFile,"Las variables "+var0+" y "+var1+" no coinciden");
+            print("ERROR[Instr: "+instr+"]: Las variables "+var0+" y "+var1+" no coinciden");
+            instr = max_instr;
         }else{
             if (!variables.containsKey(var0)){
                 variables.put(var0,0);
