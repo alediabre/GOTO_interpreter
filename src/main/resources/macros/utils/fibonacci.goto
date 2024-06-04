@@ -1,0 +1,11 @@
+IF X!=0 GOTO A
+GOTO E
+[A] Y <- Y + 1
+X <- X - 1
+IF X!=0 GOTO B
+GOTO E
+[B] Z1 <- Y
+X <- X - 1
+Y <- _SUM(Z1,Z2)
+Z2 <- Z1
+IF X!=0 GOTO B

@@ -1,6 +1,5 @@
 package org.lenguajegoto;
 
-
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -50,7 +49,8 @@ public class Visitor extends BaseVisitor {
                 visitor_macro.setVariable("Y", 0);
                 visit(ctx.variables());
                 for (int i=1; i<=macroVars.size(); i++){
-                    visitor_macro.setVariable("X"+i, variables.get(macroVars.get(i-1)));
+                    Integer var = variables.get(macroVars.get(i-1));
+                    visitor_macro.setVariable("X"+i, var==null?0:var);
                 }
 
                 //Visit tree and save the result (Y value)
@@ -80,12 +80,16 @@ public class Visitor extends BaseVisitor {
     public Object visitAsignacion(Anasint.AsignacionContext ctx){
         String var0 = (String) visit(ctx.variable(0));
         Integer nuevoValor;
+
         if (ctx.macro() != null){
             //If it is a macro, first the value returned by the macro must be evaluated
             nuevoValor = (Integer) visit(ctx.macro());
         }else{
-            //If it is a variable, the value of that variable is assigned to the first one
+            //If it is a variable, the value of that variable is assigned to the first one (0 if var1 was not assigned)
             String var1 = (String) visit(ctx.variable(1));
+            if (!variables.containsKey(var1)){
+                variables.put(var1,0);
+            }
             nuevoValor = variables.get(var1);
         }
         variables.put(var0, nuevoValor);

@@ -1,0 +1,9 @@
+IF _INVSIGN(X2) GOTO E
+Z2 <- X1
+Z2 <- Z2 + 1
+Z2 <- _DIFF(Z2,X2)
+[B] IF _INVSIGN(Z2) GOTO A
+Z1 <- Z1 + 1
+Z2 <- _DIFF(Z2,X2)
+GOTO B
+[A] Y <- Z1

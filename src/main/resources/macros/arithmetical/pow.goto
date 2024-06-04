@@ -1,7 +1,6 @@
-Z <- X1
 Y <- Y + 1
 [B] IF X2!=0 GOTO A
 GOTO E
 [A] X2 <- X2 - 1
-Y <- _PRODUCT(Y,Z)
+Y <- _PRODUCT(Y,X1)
 GOTO B

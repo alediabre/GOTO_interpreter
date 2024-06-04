@@ -2,6 +2,6 @@ Z2 <- X2
 [B] IF Z2!=0 GOTO A
 GOTO E
 [A] Z2 <- Z2 - 1
-Z1 <- _SUM(X1,Y)
+Z1 <- _SUM(Y,X1)
 Y <- Z1
 GOTO B

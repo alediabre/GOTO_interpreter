@@ -1,0 +1,12 @@
+Z1 <- X1
+Z2 <- X2
+Z2 <- Z2 + 1
+Z1 <- Z1 + 1
+[B] Z2 <- Z2 - 1
+Z1 <- Z1 - 1
+IF _INVSIGN(Z1) GOTO C
+IF Z2!=0 GOTO B
+Z2 <- X2
+GOTO B
+[C] IF _INVSIGN(Z2) GOTO E
+[A] Y <- _DIFF(X2,Z2)

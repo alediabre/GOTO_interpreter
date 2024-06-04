@@ -1,0 +1,7 @@
+Y <- X1
+Z <- X2
+[B] IF Z!=0 GOTO A
+GOTO E
+[A] Y <- Y - 1
+Z <- Z - 1
+IF Y!=0 GOTO B

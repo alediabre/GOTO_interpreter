@@ -1,0 +1,2 @@
+IF X!=0 GOTO E
+Y <- Y + 1
