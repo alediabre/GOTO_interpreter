@@ -1,0 +1,8 @@
+X1 <- X1 + 1
+Z1 <- Z1 + 1
+Z1 <- Z1 + 1
+[A] IF _DIVISOR(Z1,X1) GOTO B
+GOTO E
+[B] Y <- Y + 1
+X1 <- _QUOTIENT(X1,Z1)
+GOTO A

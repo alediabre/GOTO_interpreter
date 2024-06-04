@@ -1,0 +1,11 @@
+Z1 <- Z1 + 1
+Z1 <- Z1 + 1
+Z2 <- _LEFT(X1)
+X1 <- X1 + 1
+[A] IF Z2!=0 GOTO B
+GOTO C
+[B]X1 <- _QUOTIENT(X1,Z1)
+Z2 <- Z2 - 1
+GOTO A
+[C] X1 <- X1 - 1
+Y <- _QUOTIENT(X1,Z1)

@@ -1,2 +1,4 @@
-Y <- _POW(X1,X2)
+Z1 <- _LEFT(X1)
+Z2 <- _RIGHT(X1)
+Y <- _PAIR(Z1,Z2)
 
