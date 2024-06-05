@@ -44,7 +44,7 @@ public class Lanzador {
             visitor.setOutputFile(outputName);
 
             //Set verbose level: 0 = no output, 1 = only main program, 2 = program and first level macro, 3 = sencond level macros...
-            int verbose_level = 1;
+            int verbose_level = 2;
             visitor.setVerbose_level(verbose_level);
             visitor.setExecution_level(1);
 

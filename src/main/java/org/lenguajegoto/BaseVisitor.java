@@ -16,6 +16,7 @@ public class BaseVisitor extends AnasintBaseVisitor<Object> {
     public Map<String, Integer> etiquetas = new HashMap<>(); //Correspondencia etiqueta con el num. instrucción
     public Integer instr = 0; //Numero de instruccion actual
     public Integer max_instr; //Numero total de instrucciones (longitud del programa)
+    public Map<String, List<Anasint.InstruccionContext>> progs = new HashMap<>(); //Lista de con el contexto de las instrucciones de cada programa incrustado
 
 
     public void setProgramName(String name){
@@ -36,15 +37,28 @@ public class BaseVisitor extends AnasintBaseVisitor<Object> {
 
     public Object visitPrograma(Anasint.ProgramaContext ctx) {
         //Recorre todas las instrucciones para indexarlas en "instrucciones" y guardar los índices de las etiquetas en "etiquetas"
-        for (int i=0; i<ctx.getChildCount(); i++){
-            Anasint.InstruccionContext hijo = (Anasint.InstruccionContext) ctx.getChild(i);
+        for (int i=0; i<ctx.instruccion().size(); i++){
+
+            Anasint.InstruccionContext hijo = ctx.instruccion(i);
             if (hijo.etiqueta() != null){
                 String etiq = (String) visitEtiqueta(hijo.etiqueta());
                 etiquetas.put(etiq, i);
             }
             instrucciones.put(i, hijo);
         }
-        max_instr = ctx.getChildCount();
+        //Recorre todos los programas incrustados (progs) para indexar su lista de instrucciones en la clave dada por la etiqueta del prog
+        for (int i=0; i<ctx.prog().size(); i++){
+
+            Anasint.ProgContext progContext = ctx.prog(i);
+            String prog_label = progContext.prog_label().PROGRAM_LABEL().getText();
+            List<Anasint.InstruccionContext> prog_instrucciones = new ArrayList<>();
+
+            for (int j=0; j<progContext.instruccion().size(); j++){
+                prog_instrucciones.add(progContext.instruccion(j));
+            }
+            progs.put(prog_label,prog_instrucciones);
+        }
+        max_instr = ctx.instruccion().size();
         controller();
         return variables.get("Y");
     }

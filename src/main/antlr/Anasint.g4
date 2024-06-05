@@ -4,7 +4,7 @@ options{
 tokenVocab=Analex;
 }
 
-programa: instruccion+;
+programa: instruccion+ prog*;
 instruccion: (CA etiqueta CC)? instruccion_basica;
 
 instruccion_basica: incremento | decremento | condicional | asignacion | salto_incondicional;
@@ -12,7 +12,7 @@ instruccion_basica: incremento | decremento | condicional | asignacion | salto_i
 incremento: variable ASIGNA variable MAS UNO;
 decremento: variable ASIGNA variable MENOS UNO;
 condicional: IF condicion GOTO etiqueta;
-asignacion: variable ASIGNA (variable|macro);
+asignacion: variable ASIGNA (variable|macro|godel);
 salto_incondicional: GOTO etiqueta;
 
 
@@ -27,3 +27,7 @@ etiqueta: LETRA | ETIQUETA;
 condicion: (variable DISTINTO CERO) | macro;
 
 macro: ID_FUNCION PA variables PC;
+godel: INI_GODEL PA PROGRAM_LABEL PC;
+
+prog: prog_label instruccion+;
+prog_label: HASHTAG PROGRAM_LABEL HASHTAG;

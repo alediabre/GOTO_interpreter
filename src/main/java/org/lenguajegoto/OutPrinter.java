@@ -7,13 +7,8 @@ import java.io.IOException;
 
 public class OutPrinter {
 
-    private static BufferedWriter writer;
-
     public static void print(String filename, String value) {
-        try {
-            if (writer == null) {
-                writer = new BufferedWriter(new FileWriter(filename, true));
-            }
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, true))){
             writer.write(value);
             writer.newLine();
             writer.flush();

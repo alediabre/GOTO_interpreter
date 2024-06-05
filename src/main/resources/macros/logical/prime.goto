@@ -4,10 +4,18 @@ Z2 <- Z2 + 1
 Z1 <- Z1 - 1
 Z1 <- Z1 - 1
 Z1 <- Z1 - 1
+IF _INVSIGN(Z1) GOTO A
+IF _DIVISOR(Z2,X1) GOTO E
+Z1 <- Z1 - 1
+Z1 <- Z1 - 1
+Z2 <- Z2 + 1
 [B] IF _INVSIGN(Z1) GOTO A
 IF _DIVISOR(Z2,X1) GOTO E
 Z1 <- Z1 - 1
 Z1 <- Z1 - 1
+Z1 <- Z1 - 1
+Z1 <- Z1 - 1
+Z2 <- Z2 + 1
 Z2 <- Z2 + 1
 GOTO B
 [A] Y <- Y + 1

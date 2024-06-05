@@ -106,4 +106,22 @@ public interface AnasintVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitMacro(Anasint.MacroContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Anasint#godel}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitGodel(Anasint.GodelContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Anasint#prog}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitProg(Anasint.ProgContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Anasint#prog_label}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitProg_label(Anasint.Prog_labelContext ctx);
 }

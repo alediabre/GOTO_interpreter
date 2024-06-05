@@ -167,4 +167,34 @@ public interface AnasintListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitMacro(Anasint.MacroContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Anasint#godel}.
+	 * @param ctx the parse tree
+	 */
+	void enterGodel(Anasint.GodelContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Anasint#godel}.
+	 * @param ctx the parse tree
+	 */
+	void exitGodel(Anasint.GodelContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Anasint#prog}.
+	 * @param ctx the parse tree
+	 */
+	void enterProg(Anasint.ProgContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Anasint#prog}.
+	 * @param ctx the parse tree
+	 */
+	void exitProg(Anasint.ProgContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Anasint#prog_label}.
+	 * @param ctx the parse tree
+	 */
+	void enterProg_label(Anasint.Prog_labelContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Anasint#prog_label}.
+	 * @param ctx the parse tree
+	 */
+	void exitProg_label(Anasint.Prog_labelContext ctx);
 }
