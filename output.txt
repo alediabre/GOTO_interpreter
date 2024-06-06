@@ -1,16 +1,24 @@
----------------prueba.goto (MAIN)---------------
-{Y=0, X1=3, X2=3} | instr:0 (Y<-_NEXTPRIME(X1))
----------------_nextprime---------------
-{Y=0, X1=3} | instr:0 ([A]X1<-X1+1)
-{Y=0, X1=4} | instr:1 (X1<-X1+1)
-{Y=0, X1=5} | instr:2 (IF_PRIME(X1)GOTOB)
-{Y=0, X1=5} | instr:4 ([B]Y<-X1)
-Resultado: Y = 5
----------------FIN _nextprime---------------
-{Y=5, X1=3, X2=3} | instr:1 (Y<-*GODEL(P))
-GODEL ---> INSTRUCTIONS of P codified as:
-Instr 0 = <13,<0,3>
-Instr 1 = <0,<0,1>
-Instr 2 = <0,<15,3>
-Resultado: Y = 100
----------------FIN prueba.goto (MAIN)---------------
+--------------------prueba.goto (MAIN)--------------------
+{Y=0, X1=3, X2=3} | instr:0 (Y<-*GODEL(P))
+
+GÖDEL ---> INSTRUCTIONS of P codified as:
+Instr 0 = <0,<1,0>
+Instr 1 = <0,<1,0>
+
+--------------------_codifytriplet--------------------
+{Y=0, X1=0, X2=1, X3=0} | instr:0 (Z1<-_PAIR(X2,X3))
+{Z1=1, Y=0, X1=0, X2=1, X3=0} | instr:1 (Y<-_PAIR(X1,Z1))
+Resultado: Y = 2
+------------------FIN _codifytriplet------------------
+--------------------_codifytriplet--------------------
+{Y=0, X1=0, X2=1, X3=0} | instr:0 (Z1<-_PAIR(X2,X3))
+{Z1=1, Y=0, X1=0, X2=1, X3=0} | instr:1 (Y<-_PAIR(X1,Z1))
+Resultado: Y = 2
+------------------FIN _codifytriplet------------------
+
+GÖDEL ---> Program P instructions codified as: [2, 2]
+
+GÖDEL NUMBER of P = 36
+
+Resultado: Y = null
+------------------FIN prueba.goto (MAIN)------------------

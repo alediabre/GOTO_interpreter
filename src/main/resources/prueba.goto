@@ -1,10 +1,8 @@
-Y <- _NEXTPRIME(X1)
 Y <- *GODEL(P)
 
 #P#
-[C3] Z <- Z
-Y <- Y
-IF Z!=0 GOTO C3
+Y <- Y + 1
+Y <- Y + 1
 
 #Q#
 Z <- Z + 1

@@ -8,6 +8,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,44 +29,48 @@ public class Visitor extends BaseVisitor {
             //If macro is not defined in config.properties, notify user and go to program end
             print("ERROR[Instr: "+instr+"]: Function "+function_name+" not defined in macros");
         }
-
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("macros/"+directory_name+"/"+functionFile)){
-            if (inputStream != null) {
-                //Create a new tree for the program defined for the macro
-                CharStream input = CharStreams.fromStream(inputStream);
-                Analex analex = new Analex(input);
-                CommonTokenStream tokens = new CommonTokenStream(analex);
-                Anasint anasint = new Anasint(tokens);
-                ParseTree tree = anasint.programa();
-
-                //Create macro Visitor and set basic properties
-                Visitor visitor_macro= new Visitor();
-                visitor_macro.setProgramName(function_name);
-                visitor_macro.setExecution_level(execution_level+1);
-                visitor_macro.setVerbose_level(verbose_level);
-                visitor_macro.setOutputFile(outputFile);
-
-                //Create new variable space (macroVars) and set to Visitor
-                macroVars = new ArrayList<>();
-                visitor_macro.setVariable("Y", 0);
-                visit(ctx.variables());
-                for (int i=1; i<=macroVars.size(); i++){
-                    Integer var = variables.get(macroVars.get(i-1));
-                    visitor_macro.setVariable("X"+i, var==null?0:var);
-                }
-
-                //Visit tree and save the result (Y value)
-                result = (Integer) visitor_macro.visit(tree);
-            }else{
-                //If macro is not defined or misspelled, notify user and go to program end
-                print("ERROR[Instr: "+instr+"]: Function "+function_name+" program not found in macros");
-                instr = max_instr;
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("macros/"+directory_name+"/"+functionFile);
+        if (inputStream != null) {
+            ParseTree tree = subProgramTree(inputStream);
+            //Create macro Visitor and set basic properties
+            Visitor visitor_macro= new Visitor();
+            visitor_macro.setProgramName(function_name);
+            visitor_macro.setExecution_level(execution_level+1);
+            visitor_macro.setVerbose_level(verbose_level);
+            visitor_macro.setOutputFile(outputFile);
+            //Create new variable space (macroVars) and set to Visitor
+            macroVars = new ArrayList<>();
+            visitor_macro.setVariable("Y", 0);
+            visit(ctx.variables());
+            for (int i=1; i<=macroVars.size(); i++){
+                Integer var = variables.get(macroVars.get(i-1));
+                visitor_macro.setVariable("X"+i, var==null?0:var);
             }
-        }catch (IOException ex){
-            ex.printStackTrace();
+
+            //Visit tree and save the result (Y value)
+            result = (Integer) visitor_macro.visit(tree);
+        }else{
+            //If macro is not defined or misspelled, notify user and go to program end
+            print("ERROR[Instr: "+instr+"]: Function "+function_name+" program not found in macros");
+            instr = max_instr;
         }
         //Returns macro result to be used
         return result;
+    }
+
+    public ParseTree subProgramTree(InputStream inputStream){
+        ParseTree tree = null;
+        //Create a new tree for the program defined for the macro
+        try {
+            CharStream input = CharStreams.fromStream(inputStream);
+            Analex analex = new Analex(input);
+            CommonTokenStream tokens = new CommonTokenStream(analex);
+            Anasint anasint = new Anasint(tokens);
+            tree = anasint.programa();
+        }catch (IOException ex){
+            ex.printStackTrace();
+        }
+        return tree;
     }
 
     public Object visitVariables(Anasint.VariablesContext ctx){
@@ -122,22 +127,50 @@ public class Visitor extends BaseVisitor {
 
         //Transform a list of instruction contexts in a list of triplets for those instructions (<a,<b,c>)
         List<InstructionTriplet> triplets = getTriplets(prog_instrucciones);
-        print("GODEL ---> INSTRUCTIONS of "+prog_label+" codified as:");
+        print("\nGÖDEL ---> INSTRUCTIONS of "+prog_label+" codified as:");
         for (int i=0; i<triplets.size(); i++){
             InstructionTriplet t = triplets.get(i);
             if (t==null){
                 print("Instr "+i+" = Wrong instrucion");
+                instr = max_instr;
+                return null;
             }else {
                 print("Instr "+i+" = <"+t.a()+",<"+t.b()+","+t.c()+">");
             }
         }
+        print("");
 
-        String godelbuildresource = "./build/resources/main/macros/codification/godel.goto";
-        OutPrinter.clear(godelbuildresource);
-        OutPrinter.print(godelbuildresource,"test");
+        //Requires de _pair macro to codify the instructions using goto
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("macros/codification/codifytriplet.goto");
+        ParseTree tree = subProgramTree(inputStream);
+
+        //Initialize a list for the codified instructions and a BigInteger number for the program number (Godel number of program)
+        List<Integer> codifiedInstructions = new ArrayList<>();
+        BigInteger godelNumber = BigInteger.ONE;
+        int prime = 2;
+        for (InstructionTriplet t : triplets) {
+            Visitor visitor = new Visitor();
+            visitor.setProgramName("_codifytriplet");
+            visitor.setExecution_level(execution_level + 1);
+            visitor.setVerbose_level(verbose_level);
+            visitor.setOutputFile(outputFile);
+            //Set a,b,c variables to the macro
+            visitor.setVariable("Y", 0);
+            visitor.setVariable("X1", t.a());
+            visitor.setVariable("X2", t.b());
+            visitor.setVariable("X3", t.c());
+            Integer y = (Integer) visitor.visit(tree);
+
+            codifiedInstructions.add(y);
+            BigInteger term = BigInteger.valueOf(prime).pow(y);
+            godelNumber = godelNumber.multiply(term);
+            prime = GodelUtils.nextPrime(prime);
+        }
+        print("\nGÖDEL ---> Program "+prog_label+" instructions codified as: "+codifiedInstructions+"\n");
+        print("GÖDEL NUMBER of "+prog_label+" = "+godelNumber+"\n");
 
         instr +=1;
-        return 100;
+        return null;
     }
 
     public List<InstructionTriplet> getTriplets(List<Anasint.InstruccionContext> prog_instrucciones){
@@ -174,7 +207,6 @@ public class Visitor extends BaseVisitor {
                 c = p.b;
             }else if(basica.salto_incondicional()!=null){
                 print("ERROR[Instr: " + instr + "]: Godel codification can not process macros [UNCONDITIONAL JUMP]. Your given program must contain only Skip,Increment,Decrement or Conditional");
-                instr = max_instr;
                 b = -1;
             }
             //If the b is set to -1, means the instruction is wrong (contains macro or godel), so triplet is set to null
@@ -195,18 +227,16 @@ public class Visitor extends BaseVisitor {
         if (ctx.macro()!=null || ctx.godel()!=null){
             //If assign instruction contains a macro or godel in the right part
             print("ERROR[Instr: " + instr + "]: Godel codification can not process macros [MACRO FUNCTION]. Your given program must contain only Skip,Increment,Decrement or Conditional");
-            instr = max_instr;
             b = -1;
         }else {
             String var1 = (String) visit(ctx.variable(1));
             if(!var0.equals(var1)) {
                 //If assign instruction is a variable assignment, print error, forbidden macros
                 print("ERROR[Instr: " + instr + "]: Godel codification can not process macros [VARIABLE ASSIGNMENT]. Your given program must contain only Skip,Increment,Decrement or Conditional");
-                instr = max_instr;
                 b = -1;
             }else {
                 //If assign instruction is a Skip, b=0
-                c = codifyVariable(var0);
+                c = codifyVariable(var0)-1;
             }
         }
         return new Pair<>(b,c);
@@ -215,14 +245,14 @@ public class Visitor extends BaseVisitor {
     public Pair<Integer,Integer> caseIncrementGodel(Anasint.IncrementoContext ctx){
         int b = 1;
         String var = (String) visit(ctx.variable(0));
-        int c = codifyVariable(var);
+        int c = codifyVariable(var)-1;
         return new Pair<>(b,c);
     }
 
     public Pair<Integer,Integer> caseDecrementGodel(Anasint.DecrementoContext ctx){
         int b = 2;
         String var = (String) visit(ctx.variable(0));
-        int c = codifyVariable(var);
+        int c = codifyVariable(var)-1;
         return new Pair<>(b,c);
     }
 
@@ -232,7 +262,6 @@ public class Visitor extends BaseVisitor {
         if(ctx.condicion().macro()!=null){
             //If conditional instruction contains a macro as condition, print error, forbidden macros
             print("ERROR[Instr: " + instr + "]: Godel codification can not process macros [MACRO CONDITION]. Your given program must contain only Skip,Increment,Decrement or Conditional");
-            instr = max_instr;
             b = -1;
         }else{
             //If it is a basic conditional, b will be destination label codified + 2
@@ -240,7 +269,7 @@ public class Visitor extends BaseVisitor {
             int codified_following_label = codifyLabel(following_label);
             b = 2 + codified_following_label;
             String var = (String) visit(ctx.condicion().variable());
-            c = codifyVariable(var);
+            c = codifyVariable(var)-1;
         }
         return new Pair<>(b,c);
     }

@@ -16,7 +16,7 @@ public class BaseVisitor extends AnasintBaseVisitor<Object> {
     public Map<String, Integer> etiquetas = new HashMap<>(); //Correspondencia etiqueta con el num. instrucción
     public Integer instr = 0; //Numero de instruccion actual
     public Integer max_instr; //Numero total de instrucciones (longitud del programa)
-    public Map<String, List<Anasint.InstruccionContext>> progs = new HashMap<>(); //Lista de con el contexto de las instrucciones de cada programa incrustado
+    public Map<String, List<Anasint.InstruccionContext>> progs = new HashMap<>(); //Lista con el contexto de las instrucciones de cada programa incrustado
 
 
     public void setProgramName(String name){
@@ -64,13 +64,13 @@ public class BaseVisitor extends AnasintBaseVisitor<Object> {
     }
 
     public void controller() {
-        print("---------------"+programName+"---------------");
+        print("--------------------"+programName+"--------------------");
         while (instr < max_instr) {
             print(variables + " | instr:" + instr + " (" + instrucciones.get(instr).getText() + ")");
             visitInstruccion(instrucciones.get(instr));
         }
         print("Resultado: Y = "+ variables.get("Y"));
-        print("---------------FIN "+programName+"---------------");
+        print("------------------FIN "+programName+"------------------");
     }
 
     public Object visitInstruccion(Anasint.InstruccionContext ctx) {
