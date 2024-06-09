@@ -170,7 +170,11 @@ public class Visitor extends BaseVisitor {
         print("GÖDEL NUMBER of "+prog_label+" = "+godelNumber+"\n");
 
         instr +=1;
-        return null;
+        if (godelNumber.compareTo(BigInteger.valueOf(Integer.MAX_VALUE))>0){
+            print("WARNING[Instr: "+instr+"]: Gödel number too big to assign as a variable");
+            instr = max_instr;
+            return null;
+        }else {return godelNumber.intValue();}
     }
 
     public List<InstructionTriplet> getTriplets(List<Anasint.InstruccionContext> prog_instrucciones){

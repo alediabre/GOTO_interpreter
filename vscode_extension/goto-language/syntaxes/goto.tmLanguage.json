@@ -11,13 +11,26 @@
 		{"include": "#operators"},
 		{"include": "#labels"},
 		{"include": "#variables"},
-		{"include": "#macros"}
+		{"include": "#macros"},
+		{"include": "#progs"}
 	],
 	"repository": {
+		"progs": {
+			"patterns": [{
+				"name": "support.type",
+				"match": "#[P-T]{1}#"
+			},{
+				"name": "support.type",
+				"match": "[P-T]{1}"
+			}]
+		},
 		"macros": {
 			"patterns": [{
 				"name": "support.function",
 				"match": "_[A-Z]{1}[A-Z0-9]*"
+			},{
+					"name": "support.function",
+					"match": "\\*GODEL"
 			}]
 		},
 		"keywords": {
