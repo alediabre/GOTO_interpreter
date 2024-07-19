@@ -1,11 +1,18 @@
 package org.lenguajegoto;
 
 
+import org.lenguajegoto.dto.GotoResponse;
+import org.lenguajegoto.dto.InstructionExecution;
+import org.lenguajegoto.enums.ErrorType;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.*;
 
 
 public class BaseVisitor extends AnasintBaseVisitor<Object> {
 
+    @Autowired
+    public GotoResponse response;
     PropertyLoader propertyLoader = new PropertyLoader("config.properties");
     String outputFile;
     String programName;
@@ -28,11 +35,10 @@ public class BaseVisitor extends AnasintBaseVisitor<Object> {
         this.variables.put(varName, value);
     }
     public void setExecution_level(int value){ this.execution_level = value; }
+    public void setResponse(GotoResponse response){ this.response = response; }
 
-    public void print(String value){
-        if (verbose_level>=execution_level){
-            OutPrinter.print(outputFile, value);
-        }
+    public void error(ErrorType type, String message){
+        response.setError(new GotoResponse.GotoError(type,message,programName,instr));
     }
 
     public Object visitPrograma(Anasint.ProgramaContext ctx) {
@@ -60,17 +66,18 @@ public class BaseVisitor extends AnasintBaseVisitor<Object> {
         }
         max_instr = ctx.instruccion().size();
         controller();
-        return variables.get("Y");
+        return response;
     }
 
     public void controller() {
-        print("--------------------"+programName+"--------------------");
         while (instr < max_instr) {
-            print(variables + " | instr:" + instr + " (" + instrucciones.get(instr).getText() + ")");
             visitInstruccion(instrucciones.get(instr));
+            InstructionExecution instruction = new InstructionExecution(programName,instr,new HashMap<>(variables));
+            response.addInstruction(instruction);
         }
-        print("Resultado: Y = "+ variables.get("Y"));
-        print("------------------FIN "+programName+"------------------");
+        int result = Optional.ofNullable(variables.get("Y")).orElse(0);
+        response.setResult(result);
+        if (response.getError()!=null){response.setSuccess(false);}
     }
 
     public Object visitInstruccion(Anasint.InstruccionContext ctx) {
@@ -121,7 +128,7 @@ public class BaseVisitor extends AnasintBaseVisitor<Object> {
                 }
             }else{
                 //A boolean macro is pretended to return Boolean value (0,1), a NOT boolean macro returns Integer value (0,1,2...)
-                print("ERROR[Instr: "+instr+"]: Function "+function_name+" can not be used as a boolean condition");
+                error(ErrorType.MACRO, "Function "+function_name+" can not be used as a boolean condition");
                 instr = max_instr;
                 return null;
             }
@@ -148,7 +155,7 @@ public class BaseVisitor extends AnasintBaseVisitor<Object> {
                 instr = max_instr;
             }else if (!etiquetas.containsKey(etiq)){
                 //If label does not exist, it ends the program and notify user
-                print("WARNING[Instr: "+instr+"]: Label "+etiq+" does not exist in this program. Execution ends");
+                error(ErrorType.LABEL, "Label "+etiq+" does not exist in this program. Execution ends");
                 instr = max_instr;
             }else{
                 //In other case, goes to the instruction the label points
@@ -165,7 +172,7 @@ public class BaseVisitor extends AnasintBaseVisitor<Object> {
         String var0 = (String) visit(ctx.variable(0));
         String var1 = (String) visit(ctx.variable(1));
         if (!var0.equals(var1)){
-            print("ERROR[Instr: "+instr+"]: Las variables "+var0+" y "+var1+" no coinciden");
+            error(ErrorType.INSTRUCTION, "Variable "+var0+" does not match variable "+var1);
             instr = max_instr;
         }else{
             if (!variables.containsKey(var0)){
@@ -183,7 +190,8 @@ public class BaseVisitor extends AnasintBaseVisitor<Object> {
         String var0 = (String) visit(ctx.variable(0));
         String var1 = (String) visit(ctx.variable(1));
         if (!var0.equals(var1)){
-            print("ERROR[Instr: "+instr+"]: Las variables "+var0+" y "+var1+" no coinciden");
+            error(ErrorType.INSTRUCTION, "Variable "+var0+" does not match variable "+var1);
+            System.out.println(response.getError());
             instr = max_instr;
         }else{
             if (!variables.containsKey(var0)){

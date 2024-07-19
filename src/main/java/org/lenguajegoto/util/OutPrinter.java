@@ -1,4 +1,4 @@
-package org.lenguajegoto;
+package org.lenguajegoto.util;
 
 
 import java.io.BufferedWriter;

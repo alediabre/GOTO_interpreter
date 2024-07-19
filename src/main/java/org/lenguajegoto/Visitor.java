@@ -1,17 +1,20 @@
 package org.lenguajegoto;
 
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.misc.Pair;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.lenguajegoto.dto.GotoResponse;
+import org.lenguajegoto.dto.InstructionTriplet;
+import org.lenguajegoto.enums.ErrorType;
+import org.lenguajegoto.util.GodelUtils;
+import org.lenguajegoto.util.InputUtils;
+import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class Visitor extends BaseVisitor {
     List<String> macroVars; //Input variables for the macro function are held temporally in this list for their assignment
 
@@ -19,25 +22,22 @@ public class Visitor extends BaseVisitor {
     public Object visitMacro(Anasint.MacroContext ctx) {
         //Get macro file for the function found by the parser
         Integer result = null;
-        String directory_name = null;
-        String functionFile = null;
+        String directory_name;
+        String functionFile;
         String function_name = ctx.ID_FUNCION().getText().toLowerCase();
 
         directory_name = propertyLoader.getProperty("app.function."+function_name+".type");
         functionFile = propertyLoader.getProperty("app.function."+function_name);
         if(directory_name==null || functionFile==null){
             //If macro is not defined in config.properties, notify user and go to program end
-            print("ERROR[Instr: "+instr+"]: Function "+function_name+" not defined in macros");
+            error(ErrorType.MACRO, "Function "+function_name+" not defined in macros");
         }
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("macros/"+directory_name+"/"+functionFile);
         if (inputStream != null) {
-            ParseTree tree = subProgramTree(inputStream);
+            ParseTree tree = InputUtils.subProgramTree(inputStream);
             //Create macro Visitor and set basic properties
             Visitor visitor_macro= new Visitor();
             visitor_macro.setProgramName(function_name);
-            visitor_macro.setExecution_level(execution_level+1);
-            visitor_macro.setVerbose_level(verbose_level);
-            visitor_macro.setOutputFile(outputFile);
             //Create new variable space (macroVars) and set to Visitor
             macroVars = new ArrayList<>();
             visitor_macro.setVariable("Y", 0);
@@ -48,30 +48,19 @@ public class Visitor extends BaseVisitor {
             }
 
             //Visit tree and save the result (Y value)
-            result = (Integer) visitor_macro.visit(tree);
+            GotoResponse res = (GotoResponse) visitor_macro.visit(tree);
+            result = res.getResult();
+            //Set the resulting execution as the nested executions of last instruction
+            response.setNestedExecutionLastInstruction(res.getExecutions());
         }else{
             //If macro is not defined or misspelled, notify user and go to program end
-            print("ERROR[Instr: "+instr+"]: Function "+function_name+" program not found in macros");
+            error(ErrorType.MACRO, "Function "+function_name+" program not found in macros");
             instr = max_instr;
         }
         //Returns macro result to be used
         return result;
     }
 
-    public ParseTree subProgramTree(InputStream inputStream){
-        ParseTree tree = null;
-        //Create a new tree for the program defined for the macro
-        try {
-            CharStream input = CharStreams.fromStream(inputStream);
-            Analex analex = new Analex(input);
-            CommonTokenStream tokens = new CommonTokenStream(analex);
-            Anasint anasint = new Anasint(tokens);
-            tree = anasint.programa();
-        }catch (IOException ex){
-            ex.printStackTrace();
-        }
-        return tree;
-    }
 
     public Object visitVariables(Anasint.VariablesContext ctx){
         //Add recursively the input variables of the macro function to macroVars
@@ -112,7 +101,7 @@ public class Visitor extends BaseVisitor {
             instr = max_instr;
         }else if (!etiquetas.containsKey(etiq)){
             //If label does not exist, it ends the program and notify user
-            print("WARNING[Instr: "+instr+"]: Label "+etiq+" does not exist in this program. Execution ends");
+            error(ErrorType.LABEL, "Label "+etiq+" does not exist in this program. Execution ends");
             instr = max_instr;
         }else{
             //In other case, goes to the instruction the label points
@@ -127,22 +116,22 @@ public class Visitor extends BaseVisitor {
 
         //Transform a list of instruction contexts in a list of triplets for those instructions (<a,<b,c>)
         List<InstructionTriplet> triplets = getTriplets(prog_instrucciones);
-        print("\nGÖDEL ---> INSTRUCTIONS of "+prog_label+" codified as:");
+        System.out.println("\nGÖDEL ---> INSTRUCTIONS of "+prog_label+" codified as:");
         for (int i=0; i<triplets.size(); i++){
             InstructionTriplet t = triplets.get(i);
             if (t==null){
-                print("Instr "+i+" = Wrong instrucion");
+                System.out.println("Instr "+i+" = Wrong instrucion");
                 instr = max_instr;
                 return null;
             }else {
-                print("Instr "+i+" = <"+t.a()+",<"+t.b()+","+t.c()+">");
+                System.out.println("Instr "+i+" = <"+t.a()+",<"+t.b()+","+t.c()+">");
             }
         }
-        print("");
+        System.out.println("");
 
         //Requires de _pair macro to codify the instructions using goto
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("macros/codification/codifytriplet.goto");
-        ParseTree tree = subProgramTree(inputStream);
+        ParseTree tree = InputUtils.subProgramTree(inputStream);
 
         //Initialize a list for the codified instructions and a BigInteger number for the program number (Godel number of program)
         List<Integer> codifiedInstructions = new ArrayList<>();
@@ -153,7 +142,6 @@ public class Visitor extends BaseVisitor {
             visitor.setProgramName("_codifytriplet");
             visitor.setExecution_level(execution_level + 1);
             visitor.setVerbose_level(verbose_level);
-            visitor.setOutputFile(outputFile);
             //Set a,b,c variables to the macro
             visitor.setVariable("Y", 0);
             visitor.setVariable("X1", t.a());
@@ -166,12 +154,12 @@ public class Visitor extends BaseVisitor {
             godelNumber = godelNumber.multiply(term);
             prime = GodelUtils.nextPrime(prime);
         }
-        print("\nGÖDEL ---> Program "+prog_label+" instructions codified as: "+codifiedInstructions+"\n");
-        print("GÖDEL NUMBER of "+prog_label+" = "+godelNumber+"\n");
+        System.out.println("\nGÖDEL ---> Program "+prog_label+" instructions codified as: "+codifiedInstructions+"\n");
+        System.out.println("GÖDEL NUMBER of "+prog_label+" = "+godelNumber+"\n");
 
         instr +=1;
         if (godelNumber.compareTo(BigInteger.valueOf(Integer.MAX_VALUE))>0){
-            print("WARNING[Instr: "+instr+"]: Gödel number too big to assign as a variable");
+            error(ErrorType.GODEL, "Gödel number too big to assign as a variable");
             instr = max_instr;
             return null;
         }else {return godelNumber.intValue();}
@@ -210,7 +198,7 @@ public class Visitor extends BaseVisitor {
                 b = p.a;
                 c = p.b;
             }else if(basica.salto_incondicional()!=null){
-                print("ERROR[Instr: " + instr + "]: Godel codification can not process macros [UNCONDITIONAL JUMP]. Your given program must contain only Skip,Increment,Decrement or Conditional");
+                error(ErrorType.GODEL, "Godel codification can not process macros [UNCONDITIONAL JUMP]. Your given program must contain only Skip,Increment,Decrement or Conditional");
                 b = -1;
             }
             //If the b is set to -1, means the instruction is wrong (contains macro or godel), so triplet is set to null
@@ -230,13 +218,13 @@ public class Visitor extends BaseVisitor {
         String var0 = (String) visit(ctx.variable(0));
         if (ctx.macro()!=null || ctx.godel()!=null){
             //If assign instruction contains a macro or godel in the right part
-            print("ERROR[Instr: " + instr + "]: Godel codification can not process macros [MACRO FUNCTION]. Your given program must contain only Skip,Increment,Decrement or Conditional");
+            error(ErrorType.GODEL, "Godel codification can not process macros [MACRO FUNCTION]. Your given program must contain only Skip,Increment,Decrement or Conditional");
             b = -1;
         }else {
             String var1 = (String) visit(ctx.variable(1));
             if(!var0.equals(var1)) {
                 //If assign instruction is a variable assignment, print error, forbidden macros
-                print("ERROR[Instr: " + instr + "]: Godel codification can not process macros [VARIABLE ASSIGNMENT]. Your given program must contain only Skip,Increment,Decrement or Conditional");
+                error(ErrorType.GODEL, "Godel codification can not process macros [VARIABLE ASSIGNMENT]. Your given program must contain only Skip,Increment,Decrement or Conditional");
                 b = -1;
             }else {
                 //If assign instruction is a Skip, b=0
@@ -265,7 +253,7 @@ public class Visitor extends BaseVisitor {
         int c = 0;
         if(ctx.condicion().macro()!=null){
             //If conditional instruction contains a macro as condition, print error, forbidden macros
-            print("ERROR[Instr: " + instr + "]: Godel codification can not process macros [MACRO CONDITION]. Your given program must contain only Skip,Increment,Decrement or Conditional");
+            error(ErrorType.GODEL, "Godel codification can not process macros [MACRO CONDITION]. Your given program must contain only Skip,Increment,Decrement or Conditional");
             b = -1;
         }else{
             //If it is a basic conditional, b will be destination label codified + 2
