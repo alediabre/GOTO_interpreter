@@ -5,19 +5,16 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.lenguajegoto.dto.GotoResponse;
 import org.lenguajegoto.dto.InstructionTriplet;
 import org.lenguajegoto.enums.ErrorType;
-import org.lenguajegoto.util.GodelUtils;
+import org.lenguajegoto.util.MathUtils;
 import org.lenguajegoto.util.InputUtils;
-import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
 public class Visitor extends BaseVisitor {
     List<String> macroVars; //Input variables for the macro function are held temporally in this list for their assignment
-
 
     public Object visitMacro(Anasint.MacroContext ctx) {
         //Get macro file for the function found by the parser
@@ -127,7 +124,6 @@ public class Visitor extends BaseVisitor {
                 System.out.println("Instr "+i+" = <"+t.a()+",<"+t.b()+","+t.c()+">");
             }
         }
-        System.out.println("");
 
         //Requires de _pair macro to codify the instructions using goto
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("macros/codification/codifytriplet.goto");
@@ -147,12 +143,13 @@ public class Visitor extends BaseVisitor {
             visitor.setVariable("X1", t.a());
             visitor.setVariable("X2", t.b());
             visitor.setVariable("X3", t.c());
-            Integer y = (Integer) visitor.visit(tree);
+            GotoResponse res = (GotoResponse) visitor.visit(tree);
+            int y = res.getResult();
 
             codifiedInstructions.add(y);
             BigInteger term = BigInteger.valueOf(prime).pow(y);
             godelNumber = godelNumber.multiply(term);
-            prime = GodelUtils.nextPrime(prime);
+            prime = MathUtils.nextPrime(prime);
         }
         System.out.println("\nGÖDEL ---> Program "+prog_label+" instructions codified as: "+codifiedInstructions+"\n");
         System.out.println("GÖDEL NUMBER of "+prog_label+" = "+godelNumber+"\n");
@@ -166,7 +163,7 @@ public class Visitor extends BaseVisitor {
     }
 
     public List<InstructionTriplet> getTriplets(List<Anasint.InstruccionContext> prog_instrucciones){
-        List<InstructionTriplet> triplets = new ArrayList<InstructionTriplet>();
+        List<InstructionTriplet> triplets = new ArrayList<>();
         for (Anasint.InstruccionContext inst : prog_instrucciones){
             int a = 0;
             int b = 0;

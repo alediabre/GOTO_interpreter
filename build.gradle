@@ -2,7 +2,6 @@ plugins{
     id 'antlr'
     id 'java'
     id 'application'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'org.springframework.boot' version '3.3.0'
     id 'io.spring.dependency-management' version '1.1.5'
 }
@@ -56,32 +55,5 @@ clean.dependsOn("deleteGenDirs")
 sourceSets {
     main {
         java.srcDirs += grammarOutput
-    }
-}
-
-jar {
-    manifest {
-        attributes(
-                'Main-Class': 'org.lenguajegoto.Lanzador'
-        )
-    }
-}
-
-
-tasks.register('buildAll') {
-    group "antlr"
-    dependsOn 'clean'
-    dependsOn 'generateGrammarSource'
-    dependsOn 'shadowJar'
-
-    tasks.shadowJar.mustRunAfter tasks.generateGrammarSource
-    tasks.generateGrammarSource.mustRunAfter tasks.clean
-
-    doLast {
-        println 'Successful build! You should now execute following commands:'
-        println 'sudo chmod 755 goto'
-        println 'sudo cp goto /usr/local/bin'
-        println "sudo cp build/libs/${rootProject.name}-${version}-all.jar /usr/local/lib"
-        println 'After that try calling "goto" command with args from terminal'
     }
 }

@@ -5,6 +5,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.lenguajegoto.dto.GotoResponse;
 import org.lenguajegoto.util.InputUtils;
 import org.lenguajegoto.Visitor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;

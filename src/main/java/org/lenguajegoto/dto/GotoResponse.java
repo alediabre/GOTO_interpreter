@@ -27,7 +27,12 @@ public class GotoResponse {
     }
 
     public void setNestedExecutionLastInstruction(List<InstructionExecution> sublist){
-        executions.get(executions.size()-1).setNestedExecutions(sublist);
+        int num_exec = executions.size();
+        if (num_exec == 0){
+            this.executions = sublist;
+        }else{
+            executions.get(executions.size()-1).setNestedExecutions(sublist);
+        }
     }
 
     public static class GotoError {

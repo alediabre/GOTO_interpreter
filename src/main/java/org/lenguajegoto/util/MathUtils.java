@@ -1,6 +1,6 @@
 package org.lenguajegoto.util;
 
-public class GodelUtils {
+public class MathUtils {
 
     public static int nextPrime(int num) {
         if (num <= 1) {return 2;}

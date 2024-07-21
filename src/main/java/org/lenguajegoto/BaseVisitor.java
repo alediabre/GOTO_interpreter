@@ -4,15 +4,14 @@ package org.lenguajegoto;
 import org.lenguajegoto.dto.GotoResponse;
 import org.lenguajegoto.dto.InstructionExecution;
 import org.lenguajegoto.enums.ErrorType;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.lenguajegoto.util.PropertyLoader;
 
 import java.util.*;
 
 
 public class BaseVisitor extends AnasintBaseVisitor<Object> {
 
-    @Autowired
-    public GotoResponse response;
+    public GotoResponse response = new GotoResponse(true, new ArrayList<>(), 0,null);
     PropertyLoader propertyLoader = new PropertyLoader("config.properties");
     String outputFile;
     String programName;
